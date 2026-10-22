@@ -1,0 +1,2053 @@
+openapi: 3.0.1
+info:
+  title: Shipwire Receivings API
+  description: Allows managing inventory at Shipwire and Shipwire Anywhere warehouses using receiving
+    orders
+  version: '3.0'
+servers:
+- url: https://api.shipwire.com/api
+security:
+- basicAuth: []
+paths:
+  /v3/receivings:
+    get:
+      tags:
+      - Receivings
+      summary: Get list of advance ship notices
+      description: Get an itemized list of receivings.
+      operationId: listReceivings
+      parameters:
+      - name: expand
+        in: query
+        description: Expand receivings data in the response, instead of accessing directly via a URL (comma
+          separated list). See resources `Holds`, `Instruction Recipients`, `Items`, `Shipments`, `labels`
+          and `Trackings` for information on the data model returned by this parameter
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: enum
+            enum:
+            - holds
+            - instructionsRecipients
+            - items
+            - shipments
+            - labels
+            - trackings
+            - all
+      - name: commerceName
+        in: query
+        description: Filter by commerceName (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: transactionId
+        in: query
+        description: Filter by transactionId (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: externalId
+        in: query
+        description: Filter by externalId (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orderId
+        in: query
+        description: Filter by orderId (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: orderNo
+        in: query
+        description: Filter by orderNo (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Filter by status (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: enum
+          enum:
+          - processed
+          - canceled
+          - completed
+          - delivered
+          - returned
+          - submitted
+          - held
+          - tracked
+      - name: updatedAfter
+        in: query
+        description: 'Only show resources updated after this date (ISO 8601 format, ex: "2014-05-30T13:08:29-07:00")'
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: warehouseId
+        in: query
+        description: Filter by warehouseId (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: warehouseExternalId
+        in: query
+        description: Filter by warehouseExternalId (comma separated list)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: vendorId
+        in: query
+        description: Filter by vendorId
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: vendorExternalId
+        in: query
+        description: Filter by vendorExternalId
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReceivingsResponse'
+    post:
+      tags:
+      - Receivings
+      summary: Create an advance ship notice
+      description: Create a new receiving.
+      operationId: createReceiving
+      parameters:
+      - name: expand
+        in: query
+        description: Expand receivings data in the response, instead of accessing directly via a URL (comma
+          separated list). See resources `Holds`, `Instruction Recipients`, `Items`, `Shipments`, `labels`
+          and `Trackings` for information on the data model returned by this parameter
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: enum
+            enum:
+            - holds
+            - instructionsRecipients
+            - items
+            - shipments
+            - labels
+            - trackings
+            - all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReceivingRequest'
+        required: true
+        description: Receiving order details to create, including items, shipping and routing
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReceivingResponse'
+      x-codegen-request-body-name: body
+  /v3/receivings/{id}:
+    get:
+      tags:
+      - Receivings
+      summary: Get advance ship notice
+      description: Get information about this receiving.
+      operationId: getReceiving
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: expand
+        in: query
+        description: Expand receivings data in the response, instead of accessing directly via a URL (comma
+          separated list). See resources `Holds`, `Instruction Recipients`, `Items`, `Shipments`, `labels`
+          and `Trackings` for information on the data model returned by this parameter
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: enum
+            enum:
+            - holds
+            - instructionsRecipients
+            - items
+            - shipments
+            - labels
+            - trackings
+            - all
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingResponse'
+    put:
+      tags:
+      - Receivings
+      summary: Update an advance ship notice
+      description: Modify information about this receiving.
+      operationId: updateReceiving
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: expand
+        in: query
+        description: Expand receivings data in the response, instead of accessing directly via a URL (comma
+          separated list). See resources `Holds`, `Instruction Recipients`, `Items`, `Shipments`, `labels`
+          and `Trackings` for information on the data model returned by this parameter
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: enum
+            enum:
+            - holds
+            - instructionsRecipients
+            - items
+            - shipments
+            - labels
+            - trackings
+            - all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReceivingRequest'
+        required: true
+        description: Receiving order fields to update
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingResponse'
+      x-codegen-request-body-name: body
+  /v3/receivings/{id}/cancel:
+    post:
+      tags:
+      - Receivings
+      summary: Cancel a receiving order
+      description: Cancel this receiving.
+      operationId: cancelReceiving
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelReceivingResponse'
+  /v3/receivings/{id}/labels/cancel:
+    post:
+      tags:
+      - Receivings
+      summary: Cancel a receiving label
+      description: Cancel shipping labels on this receiving.
+      operationId: cancelReceivingLabels
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelReceivingLabelsResponse'
+  /v3/receivings/{id}/holds:
+    get:
+      tags:
+      - Receivings
+      summary: Get holds detail
+      description: Get the list of holds, if any, on this receiving.
+      operationId: listReceivingHolds
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: includeCleared
+        in: query
+        description: When set to 1, response includes holds that have been cleared
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingHoldsResponse'
+  /v3/receivings/{id}/instructionsRecipients:
+    get:
+      tags:
+      - Receivings
+      summary: Get instructions and the recipients contact details
+      description: Get instructions and email recipients for this receiving.
+      operationId: listReceivingInstructionsRecipients
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingInstructionsRecipientsResponse'
+  /v3/receivings/{id}/extendedAttributes:
+    get:
+      tags:
+      - Receivings
+      summary: Get receiving extended attributes
+      description: Get the extended attributes of this receiving.
+      operationId: listReceivingExtendedAttributes
+      parameters:
+      - name: id
+        in: path
+        description: The receiving's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingExtendedAttributesResponse'
+  /v3/receivings/{id}/items:
+    get:
+      tags:
+      - Receivings
+      summary: Get items detail
+      description: Get the contents of this receiving.
+      operationId: listReceivingItems
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingItemsResponse'
+  /v3/receivings/{id}/shipments:
+    get:
+      tags:
+      - Receivings
+      summary: Get shipment details
+      description: Get shipping dimension and container information.
+      operationId: listReceivingShipments
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingShipmentsResponse'
+  /v3/receivings/{id}/trackings:
+    get:
+      tags:
+      - Receivings
+      summary: Get trackings detail
+      description: Get tracking information for this receiving.
+      operationId: listReceivingTrackings
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingTrackingsResponse'
+  /v3/receivings/{id}/labels:
+    get:
+      tags:
+      - Receivings
+      summary: Get labels detail
+      description: 'Get labels information for this receiving.
+
+        To retrieve the labels as PDF add the following header to the request:
+
+        Accept: application/pdf'
+      operationId: listReceivingLabels
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceivingLabelsResponse'
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/ReceivingLabelsResponse'
+  /v3.1/receivings/{id}/markComplete:
+    post:
+      tags:
+      - Receivings
+      summary: Mark the receiving completed
+      description: Mark this receiving order as complete. This endpoint works only for Shipwire Anywhere
+        warehouses.
+      operationId: markReceivingComplete
+      parameters:
+      - name: id
+        in: path
+        description: The advance ship notice's ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarkReceivingCompleteResponse'
+components:
+  schemas:
+    ReceivingItemExtendedAttributes:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingExtendedAttributesResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+    ReceivingHoldsResponseResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingHoldsResourceItems'
+    DocumentsResource:
+      type: object
+      properties:
+        receivingGuide:
+          type: string
+          description: Link to dowload a Shipwire Warehouse Receiving guide
+          example: https://dnjngsjeb.clt.net/content/uploads/2018/08/26223422/Receiving_Guide_Final.pdf
+        genericLabel:
+          type: string
+          description: Link to dowload a generic label document
+          example: https://api.shipwire.com/api/v3/receivings/8411/documents/genericLabel
+    ReceivingShipmentsResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          type: object
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/shipments/71
+    Trackings:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/TrackingsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/trackings?offset=0&limit=20&expand=all
+      description: Specifies shipment tracking details. See `trackings` resource
+    ReceivingResponse:
+      type: object
+      properties:
+        resource:
+          type: object
+          properties: {}
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411?expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+    ReceivingServerResponse:
+      title: Receiving Server Response
+      type: object
+      properties:
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings?offset=0&limit=20&expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Receiving Server Response
+    Label:
+      type: object
+      properties:
+        orderExternalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: This is the receving order ID in the external system on which the hold is applied
+          example: ORD00101
+        labelId:
+          type: integer
+          description: A unique ID assigned to each shipping label in the shipwire system
+          example: 1
+        orderId:
+          type: integer
+          description: This is the receving order ID in the shipwire system on which the hold is applied
+          example: 8411
+    ReceivingInstructionsRecipientsResponse:
+      title: Get instructions recipients details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The instructions and recipients contact details of the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingInstructionsRecipientsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/instructionsRecipients?offset=0&limit=20
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get instructions recipients details response
+    ReceivingItemsResponse:
+      title: Get items details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The items being shipped to Shipwire in the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingInstructionsRecipientsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/items?expand=all&offset=0&limit=20
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get items details response
+    TrackingsResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Tracking'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/473168411/trackings/3831
+    ReceivingLotControlResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingLotControlResourceItems'
+    ReceivingLotControl:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          description: The  quantity of total SKU items belonging to the particular lot
+          example: 10
+        lotId:
+          type: string
+          description: A unique ID assigned to a particular quantity or lot of material shipped from a
+            siingle merchant
+          example: hgf897
+        expirationDate:
+          type: string
+          description: This is the expiry date of the product belonging to the particular lot
+          format: date-time
+          example: '2018-05-28T00:00:00-07:00'
+    ExtendedAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the extended attribute i.e. any additional information as per the customer
+            request to be added in the receiving order. (e.g. return instructions)
+          example: returnInstruction
+        type:
+          type: string
+          description: Data type of the extended attribute value i.e. a string or integer
+          example: string
+        value:
+          type: string
+          description: Value of the extended attribute which depends on the customer request. (e.g. For
+            return instructions the value can be mail in or store)
+          example: Mail in or store
+    ReceivingInstructionsRecipientsResponseResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingInstructionsRecipientsResponseResourceItems'
+    ReceivingLotControlResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingLotControl'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+    MarkReceivingCompleteResponse:
+      title: Mark the receiving completed response
+      type: object
+      properties:
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+        status:
+          type: integer
+          description: This is the HTTP status code
+          format: int32
+          example: 200
+      description: Mark the receiving as completed
+    ReceivingItemsResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingItemsResourceItems'
+    InstructionsRecipient:
+      type: object
+      properties:
+        note:
+          type: string
+          description: May be used to provide instructions to recipient on how to process and store received
+            inventory
+        name:
+          type: string
+          description: Name of individual responsible for processing order/inventory at receiving facility
+          example: David
+        email:
+          type: string
+          description: Email address of individual responsible for processing order/inventory at receiving
+            facility
+          format: email
+          example: shipping@wesellem.com
+    ReceivingItemsResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingItem'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/411/items?expand=all&offset=0&limit=20
+    AddressResource:
+      type: object
+      properties:
+        country:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Country from where the inventory is shipped
+          example: United States
+        address3:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the third line of the address of the shipper
+        address2:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the second line of the address of the shipper
+          example: Apt 10
+        city:
+          maxLength: 25
+          minLength: 1
+          type: string
+          description: City from where the inventory is shipped
+          example: Schenectady
+        phone:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Contact phone number of the shipper for any communication
+          example: '1234567890'
+        address1:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the first line of the address of the shipper
+          example: 11 Prsilla St
+        postalCode:
+          maxLength: 10
+          minLength: 1
+          type: string
+          description: Postal code of the area from where the inventory is shipped
+          example: '12345'
+        name:
+          maxLength: 35
+          minLength: 1
+          type: string
+          description: Name of the shipper
+          example: Stephen Alexander
+        state:
+          maxLength: 25
+          minLength: 1
+          type: string
+          description: State from where the inventory is shipped
+          example: NY
+        email:
+          type: string
+          description: Email address of the shipper. i.e. the merchant sending inventory to the Shipwire
+            warehouse
+          format: email
+          example: shipping@wesellem.com
+    LabelsResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Label'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/473168411/labels/3831
+    Shipments:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ShipmentsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/673/trackings?offset=0&limit=20&expand=all
+      description: Specifies goods details. See `shipment` resource
+    ListReceivingsResponseItems:
+      title: Get list of advance ship notices response
+      type: object
+    ReceivingExtendedAttributesResponse:
+      title: Get receiving extended attributes response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The extended attributes of the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingInstructionsRecipientsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/instructionsRecipients?offset=0&limit=20
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get receiving extended attributes response
+    ListReceivingsResponseOffset:
+      title: Get list of advance ship notices response
+      type: object
+    ReceivingHoldsResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingHoldsResourceItems'
+    ReceivingShipmentsResponse:
+      title: Get shipments details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The shipments of the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingShipmentsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/shipments?expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get shipment details response
+    Shipment:
+      type: object
+      properties:
+        shipmentId:
+          type: integer
+          description: A unique ID assigned to the shipment (container) in the shipwire system
+          example: 12
+        length:
+          type: number
+          description: This is the length of the shipment (container) based on its Unit of Measurement
+          format: decimal
+          example: 2.99
+        width:
+          type: number
+          description: This is the width of the shipment (container) based on its Unit of Measurement
+          format: decimal
+          example: 12.0
+        weight:
+          type: number
+          description: This is the weight of the shipment (container) based on its Unit of Measurement
+          format: decimal
+          example: 1.2
+        type:
+          type: string
+          description: Type of the shipment (container) based on the contents stored in it (e.g. a box,
+            parcel, etc.)
+          example: box
+        height:
+          type: number
+          description: This is the height of the shipment (container) based on its Unit of Measurement
+          format: decimal
+          example: 12.0
+    Labels:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/LabelsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/673/labels?offset=0&limit=20&expand=all
+    ShipmentsResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentsResourceItems'
+    AdvanceShippingModelResource:
+      type: object
+      properties:
+        orderNo:
+          maxLength: 25
+          minLength: 1
+          type: string
+          description: Purchase Order number associated with the Advance Shipping Notice
+          example: foobar1
+        commerceName:
+          type: string
+          description: This determines the medium through which the Advance Shipping Notice is created.
+            If it is created through a shopping cart the commerce name will be Shoppify, Magento. If created
+            through the platform it will be Shippwirewebapp and if created through API it will be Shippwire.
+            If created through Excel sheet it will be Spreadsheet
+          example: Shipwire
+        documents:
+          $ref: '#/components/schemas/Documents'
+        lastUpdateDate:
+          type: string
+          description: Date on which the Advance Shipping Notice was last updated
+          format: date-time
+          example: '2014-05-27T00:00:00-07:00'
+        vendorExternalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: A unique user-provided identifier for a vendor in an external system
+          example: VENDOR10101
+        shipForm:
+          type: object
+        externalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: Unique ID of the Advance Shipping Notice in an external system
+          example: ORD0012
+        vendorId:
+          type: integer
+          description: A unique ID assigned to each vendor in the Shipwire system. (See the Vendors API.)
+          example: 110
+        expectedDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is expected to arrive at the Shipwire
+            warehouse
+          format: date-time
+          example: '2014-05-27T00:00:00-07:00'
+        shipments:
+          $ref: '#/components/schemas/Shipments'
+        transactionId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: Transaction ID of the Advance Shipping Notice in Shipwire system
+          example: '1401201560'
+        extendedAttributes:
+          $ref: '#/components/schemas/ReceivingExtendedAttributesResource'
+        labels:
+          $ref: '#/components/schemas/Labels'
+        arrangement:
+          $ref: '#/components/schemas/Arrangement'
+        routing:
+          $ref: '#/components/schemas/Routing'
+        trackings:
+          $ref: '#/components/schemas/Trackings'
+        options:
+          $ref: '#/components/schemas/Options'
+        holds:
+          $ref: '#/components/schemas/ReceivingHolds'
+        id:
+          type: integer
+          description: Unique ID of the Advance Shipping Notice in an Shipwire system
+          example: 673
+        items:
+          $ref: '#/components/schemas/ReceivingItems'
+        events:
+          $ref: '#/components/schemas/Events'
+        status:
+          maxLength: 11
+          minLength: 4
+          type: string
+          description: Status of the Advance Shipping Notice. (e.g. completed, held)
+          format: enum
+          example: completed
+          enum:
+          - cancelled
+          - completed
+          - delivered
+          - submitted
+          - held
+          - processed
+          - unprocessed
+        instructionsRecipients:
+          $ref: '#/components/schemas/InstructionsRecipients'
+    ReceivingLabelsResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          type: object
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/labels/71
+    ReceivingTrackingsResponseResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingTrackingsResponseResourceItems'
+    ListReceivingsResponseResource:
+      type: object
+      description: Gets List Of Advance Ship Notices
+    CreateReceivingResponse:
+      allOf:
+      - $ref: '#/components/schemas/ReceivingServerResponse'
+      - $ref: '#/components/schemas/ListReceivingsResponseOffset'
+      - $ref: '#/components/schemas/CreateReceivingResponseResource'
+      - $ref: '#/components/schemas/CreateReceivingResponseResourceItems'
+    ReceivingExtendedAttributesResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingExtendedAttributesResourceItems'
+    ReceivingItem:
+      title: Receiving Item
+      type: object
+      properties:
+        inReview:
+          type: integer
+          description: The number of SKU items currently under review within the warehouse. (i.e. items
+            being reviewed to determine if they are in sellable condition or damaged, etc.)
+          example: 2
+        quantity:
+          type: integer
+          description: The  quantity of total SKU items belonging to the particular lot
+          example: 10
+        productId:
+          type: integer
+          description: A unique auto-generated ID assigned to each new product added to the Shipwire Product
+            Catalog
+        orderId:
+          type: integer
+          description: This is the receving order ID in the shipwire system on which the hold is applied
+          example: 213
+        expected:
+          type: integer
+          description: The total number of SKU items expected to be received at the warehouse as per the
+            order
+          example: 2
+        pending:
+          type: integer
+          description: The number of pending SKU items expected to be received at the warehouse
+          example: 2
+        lotControl:
+          type: object
+          description: Lot control details (lot, expiration date and quantity) of the item
+          allOf:
+          - $ref: '#/components/schemas/ReceivingItemLotControl'
+        good:
+          type: integer
+          description: The number of SKU items ready for fulfillment in the warehouse
+          example: 2
+        extendedAttributes:
+          type: object
+          description: Extended attributes of the item
+          allOf:
+          - $ref: '#/components/schemas/ReceivingItemExtendedAttributes'
+        orderExternalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: This is the receving order ID in the external system on which the hold is applied
+          example: ORD0001
+        productExternalId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: A unique user-provided identifier for a product in an external system
+          example: ORDDET0001
+        damaged:
+          type: integer
+          description: The number of SKU items found to be damaged (during receiving or otherwise) within
+            the warehouse and unavailable for fulfillment
+          example: 2
+        id:
+          type: integer
+          description: A unique auto-generated ID assigned to each new line item added to the Shipwire
+            Platform
+          example: 1
+        sku:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: SKU (Stock Keeping Unit) is a unique name for your product and is required for
+            both physical and virtual products in inventory
+          example: T-shirt
+      description: Item being shipped to Shipwire
+    ReceivingTrackingsResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          type: object
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/trackings/71
+    LabelsResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelsResourceItems'
+    InstructionsRecipients:
+      type: object
+      properties:
+        resource:
+          type: object
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/673/instructionsRecipients?offset=0&limit=20&expand=all
+      description: List of contacts and instructions to send to each of them
+    Documents:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/DocumentsResource'
+        resourceLocation:
+          type: string
+          description: A URL for downloading the generic label format that the warehouse generates for
+            each customer
+    ReceivingLabelsResponseResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingLabelsResponseResourceItems'
+    ReceivingExtendedAttributesResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ExtendedAttributes'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/extendedAttributes?expand=all&offset=0&limit=20
+    ReceivingHolds:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingHoldsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.developer.shipwire.com/api/v3/receivings/8411/holds?expand=all&offset=0&limit=20
+    Options:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/OptionsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+      description: Specify the warehouse where items are being shipped
+    Tracking:
+      type: object
+      properties:
+        summary:
+          type: string
+          description: Summary added to the tracking record for tracking purposes
+        labelCreationDate:
+          type: string
+          description: Date on which the shipping labels are created for the tracking record
+          format: date-time
+          example: '2018-05-26T00:00:00-07:00'
+        orderId:
+          type: integer
+          description: This is the receving order ID in the shipwire system on which the hold is applied
+          example: 8411
+        summaryDate:
+          type: string
+          description: Date on which the summary is added to the tracking record
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        tracking:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is reference tracking number provided by the carrier for tracking purposes
+          example: TRACK0001
+        url:
+          type: string
+          description: A URL that gives more information about the tracking record
+        orderExternalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: This is the receving order ID in the external system on which the hold is applied
+          example: ORD0001
+        carrier:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: This is the unique ID of the carrier used to deliver the order to the warehouse
+          example: CAR00111
+        firstScanDate:
+          type: string
+          description: Date the order's associated shipping carrier scans the label when it receives the
+            order
+          format: date-time
+          example: '2018-05-26T00:00:00-07:00'
+        phone:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Phone number of the contact person from the carrier company for any communication
+          example: '78872837827'
+        trackedDate:
+          type: string
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        contact:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: Name of person from the carrier company who can be contacted for any communication
+          example: Andrew Carr
+        id:
+          type: integer
+          description: This is the unquie ID generated in the shipwire system for each tracking record
+          example: 1
+        delivered1Date:
+          type: string
+          description: Date on which the the inventory is received against the tracking record
+          format: date-time
+          example: '2014-05-27T00:00:00-07:00'
+    ListReceivingsResponse:
+      allOf:
+      - $ref: '#/components/schemas/ReceivingServerResponse'
+      - $ref: '#/components/schemas/ListReceivingsResponseItems'
+      - $ref: '#/components/schemas/ListReceivingsResponseResource'
+      - $ref: '#/components/schemas/ListReceivingsResponseResourceItems'
+    ShipmentsResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/Shipment'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/473168411/shipments/2971
+    ReceivingLabelsResponse:
+      title: Get labels details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The shipping labels of the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingLabelsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/labels?expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get labels details response
+    CancelReceivingResponse:
+      title: Cancel a receiving order response
+      type: object
+      properties:
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Receiving was cancelled
+        status:
+          type: integer
+          description: This is the HTTP status code
+          format: int32
+          example: 200
+    ReceivingHoldsResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingHold'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+    Events:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/EventsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+      description: Events registered to this advance ship notice
+    OptionsResource:
+      type: object
+      properties:
+        warehouseRegion:
+          type: string
+          description: This is the place where the warehouse is located
+          example: UK
+        warehouseId:
+          type: integer
+          description: A unique identifier for a Shipwire or Shipwire Anywhere warehouse
+          format: int32
+          example: 7
+        doNotSendEmail:
+          type: integer
+          description: A boolean which indicates whether or not the warehouse sends ASN related emails
+            on events such as creation, delivery. The value '1' (True) means that the emails will not
+            be sent
+          format: enum
+          example: 1
+        warehouseExternalId:
+          type: string
+          description: A unique user-provided identifier for a Shipwire Anywhere warehouse in an external
+            system
+          example: Warehouse Id for this order on client platform
+    ReceivingHold:
+      title: Holds on Advance ship notice
+      type: object
+      properties:
+        orderId:
+          type: integer
+          description: This is the receving order ID in the shipwire system on which the hold is applied
+          example: 8411
+        description:
+          maxLength: 255
+          minLength: 1
+          type: string
+          description: This is the description given for the hold in the Shipwire system
+          example: Please edit your ASN and accept the  Packing List acknowledgement, High Value Items
+            acknowledgement.
+        appliedDate:
+          type: string
+          description: This is the date on which the hold is applied to the order
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        clearedDate:
+          type: string
+          description: This is the date on which the hold is removed from the order
+          format: date-time
+          example: '2018-05-28T00:00:00-07:00'
+        id:
+          type: integer
+          description: This is the unique ID assigned to a particular hold in the shipwire system
+          example: 51
+        externalOrderId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: This is the receving order ID in the external system on which the hold is applied
+          example: OM10001
+        type:
+          maxLength: 100
+          minLength: 1
+          type: string
+          description: This is the type of hold due to which the order is stuck. (e.g. customer, admin,
+            etc.)
+          example: customer
+      description: Holds that apply to this advance ship notice
+    ReceivingTrackingsResponse:
+      title: Get trackings details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The shipment trackings of the receiving
+          allOf:
+          - $ref: '#/components/schemas/ReceivingTrackingsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/trackings?expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get trackings details response
+    CreateReceivingResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingItemsResource'
+    CreateReceivingItem:
+      title: Receiving Item
+      type: object
+      properties:
+        orderExternalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: This is the receving order ID in the external system on which the hold is applied
+          example: ORD0001
+        inReview:
+          type: integer
+          description: The number of SKU items currently under review within the warehouse. (i.e. items
+            being reviewed to determine if they are in sellable condition or damaged, etc.)
+          example: 2
+        quantity:
+          type: integer
+          description: The  quantity of total SKU items belonging to the particular lot
+          example: 10
+        productId:
+          type: integer
+          description: A unique auto-generated ID assigned to each new product added to the Shipwire Product
+            Catalog
+        orderId:
+          type: integer
+          description: This is the receving order ID in the shipwire system on which the hold is applied
+          example: 213
+        productExternalId:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: A unique user-provided identifier for a product in an external system
+          example: ORDDET0001
+        expected:
+          type: integer
+          description: The total number of SKU items expected to be received at the warehouse as per the
+            order
+          example: 2
+        pending:
+          type: integer
+          description: The number of pending SKU items expected to be received at the warehouse
+          example: 2
+        damaged:
+          type: integer
+          description: The number of SKU items found to be damaged (during receiving or otherwise) within
+            the warehouse and unavailable for fulfillment
+          example: 2
+        id:
+          type: integer
+          description: A unique auto-generated ID assigned to each new line item added to the Shipwire
+            Platform
+          example: 1
+        sku:
+          maxLength: 50
+          minLength: 1
+          type: string
+          description: SKU (Stock Keeping Unit) is a unique name for your product and is required for
+            both physical and virtual products in inventory
+          example: T-shirt
+        good:
+          type: integer
+          description: The number of SKU items ready for fulfillment in the warehouse
+          example: 2
+      description: Item being shipped to Shipwire
+    CreateReceivingResponseResource:
+      type: object
+      description: Gets List Of Advance Ship Notices
+    TrackingsResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingsResourceItems'
+    Routing:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/RoutingResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+      description: Package routing details
+    RoutingResource:
+      type: object
+      properties:
+        warehouseRegion:
+          type: string
+          description: This is the place where the warehouse is located
+          example: LA
+        originLatitude:
+          type: number
+          description: Latitude of the warehouse. This is useful for routing purposes to find the nearest
+            warehouse
+          format: decimal
+          example: -117.396
+        originLongitude:
+          type: number
+          description: Longitude of the warehouse. This is useful for routing purposes to find the nearest
+            warehouse
+          format: decimal
+          example: 34.0396
+        warehouseId:
+          type: integer
+          description: A unique identifier for a Shipwire or Shipwire Anywhere warehouse
+          example: 11
+        warehouseExternalId:
+          type: string
+          description: A unique user-provided identifier for a Shipwire Anywhere warehouse in an external
+            system
+          example: WAR00011
+        warehouseName:
+          type: string
+          description: This is the name of the warehouse
+          example: LA-Warehouse
+    ReceivingHoldsResponse:
+      title: Get instructions recipients details response
+      type: object
+      properties:
+        resource:
+          type: object
+          description: The holds placed on the receiving, with links to each hold
+          allOf:
+          - $ref: '#/components/schemas/ReceivingHoldsResponseResource'
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Successful
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/holds?expand=all
+        status:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+      description: Get instructions recipients details response
+    CreateReceivingRequest:
+      title: Create an advance ship notice request
+      required:
+      - arrangement
+      - items
+      - options
+      - shipFrom
+      - shipments
+      type: object
+      properties:
+        arrangement:
+          $ref: '#/components/schemas/Arrangement'
+        shipFrom:
+          $ref: '#/components/schemas/AddressResource'
+        orderNo:
+          maxLength: 25
+          minLength: 1
+          type: string
+          description: Purchase Order number associated with the Advance Shipping Notice
+          example: foobar1
+        trackings:
+          type: array
+          description: Specifies shipment tracking details. See `trackings` resource
+          items:
+            $ref: '#/components/schemas/Tracking'
+        options:
+          $ref: '#/components/schemas/OptionsResource'
+        externalId:
+          maxLength: 32
+          minLength: 1
+          type: string
+          description: Unique ID of the Advance Shipping Notice in an external system
+          example: ClientID123456
+        expectedDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is expected to arrive at the Shipwire
+            warehouse
+          format: date-time
+          example: '2014-05-27T00:00:00-07:00'
+        shipments:
+          $ref: '#/components/schemas/Shipment'
+        items:
+          type: array
+          description: Items being shipped to Shipwire
+          items:
+            $ref: '#/components/schemas/CreateReceivingItem'
+        extendedAttributes:
+          type: array
+          description: Extended attributes of the advance ship notice
+          items:
+            $ref: '#/components/schemas/ExtendedAttributes'
+        labels:
+          $ref: '#/components/schemas/Label'
+        instructionsRecipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstructionsRecipient'
+    Arrangement:
+      type: object
+      properties:
+        phone:
+          type: string
+          description: Contact phone number of the person from Shipwire system responsible for coordinating
+            with the carrier or supplier for arranging delivery if needed
+          example: '7822878787'
+        contact:
+          type: string
+          description: Contact name of the person from Shipwire system responsible for coordinating with
+            the carrier or supplier for arranging delivery if needed
+          example: Andrew Carr
+        type:
+          type: string
+          description: The arrangement type, which tells Shipwire how the shipment will be delivered to
+            the warehouse
+          format: enum
+          example: none
+          enum:
+          - none
+          - overseas
+          - label
+          - pickup
+          - ltlpickup
+          - portpickup
+      description: The arrangement type tells Shipwire what further actions to take once the advance ship
+        notice is created
+    ListReceivingsResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          type: object
+    ReceivingItemLotControl:
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingLotControlResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+    CancelReceivingLabelsResponse:
+      title: Cancel a receiving label response
+      type: object
+      properties:
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+        message:
+          type: string
+          description: This is the HTTP status message
+          example: Labels cancelled
+        status:
+          type: integer
+          description: This is the HTTP status code
+          format: int32
+          example: 200
+    ReceivingShipmentsResponseResource:
+      type: object
+      properties:
+        next:
+          type: string
+          description: A link used to fetch the next set or page of items in the API response
+        total:
+          type: integer
+          description: Total number of available items in the API response
+          example: 1
+        offset:
+          type: integer
+          description: This is an integer that matches the offset given in the request and dictates the
+            number of items to skip while fetching results. For example, there is a preset limit of 20
+            results per page. If there are 30 total results and offset is set to 20, then the response
+            will show the second "page" of results, with items 21 to 30
+          example: 0
+        previous:
+          type: string
+          description: A link used to fetch the previous set or page of items in the API response
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceivingShipmentsResponseResourceItems'
+    EventsResource:
+      type: object
+      properties:
+        deliveredDate:
+          type: string
+          description: Date on which the inventory is received at the Shipwire warehouse
+          format: date-time
+        processedDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is processed i.e. the details of inventory
+            are entered in the Warehouse Management System
+          format: date-time
+          example: '2018-05-27T07:39:20-07:00'
+        createdDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is created by the merchant
+          format: date-time
+          example: '2018-05-27T07:39:20-07:00'
+        lastManualUpdateDate:
+          type: string
+          description: Date on which the Advance Shipping Notice was last edited by the merchant manually
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        pickedUpDate:
+          type: string
+          description: Date on which the inventory is picked up from the Shipper's address
+          format: date-time
+        expectedDate:
+          type: string
+          description: Date on which the inventory is expected to arrive at the Shipwire warehouse
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        submittedDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is submitted to the Shipwire warehouse
+          format: date-time
+          example: '2018-05-27T17:39:35-07:00'
+        completedDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is completed by the merchant
+          format: date-time
+          example: '2018-05-27T17:39:35-07:00'
+        cancelledDate:
+          type: string
+          description: Date on which the Advance Shipping Notice is cancelled due to any reason
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+        returnedDate:
+          type: string
+          description: Date on which the partial/full inventory is returned to the Shipper's address
+          format: date-time
+          example: '2018-05-27T00:00:00-07:00'
+    ReceivingInstructionsRecipientsResponseResourceItems:
+      type: object
+      properties:
+        resource:
+          type: object
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+    ReceivingItems:
+      title: Receiving Items
+      type: object
+      properties:
+        resource:
+          $ref: '#/components/schemas/ReceivingItemsResource'
+        resourceLocation:
+          type: string
+          description: A URL that gives more information about the linked resource. A 'null' value would
+            mean that no further information is available for that resource
+          example: https://api.shipwire.com/api/v3/receivings/8411/items?expand=all&offset=0&limit=20
+      description: Items being shipped to Shipwire
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+x-original-swagger-version: '2.0'
