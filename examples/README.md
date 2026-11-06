@@ -2,13 +2,12 @@
 
 The `ballerinax/shipwire.receivings` connector provides practical examples illustrating usage in various scenarios.
 
-[//]: # (TODO: Add examples)
-1. 
-2. 
+1. [Receiving status report](./receiving_status_report/receiving_status_report.md) - Retrieve a receiving order together with its items and holds.
+2. [Advance notice lifecycle](./advance_notice_lifecycle/advance_notice_lifecycle.md) - Create an advance ship notice and optionally cancel it.
 
 ## Prerequisites
 
-[//]: # (TODO: Add prerequisites)
+- A Shipwire account with access to the receivings API and its username and password.
 
 ## Running an example
 

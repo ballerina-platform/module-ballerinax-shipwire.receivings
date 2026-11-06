@@ -5,12 +5,10 @@ name = "shipwire.receivings"
 version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = [] # TODO: Add keywords
-# icon = "icon.png" # TODO: Add icon
+keywords = ["Vendor/Shipwire", "Area/ERP & Business Operations", "Type/Connector"]
+icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-shipwire.receivings"
 
 [build-options]
 observabilityIncluded = true
 
-[platform.java21]
-graalvmCompatible = true
